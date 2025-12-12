@@ -17,9 +17,6 @@ Authorization: Bearer {your_token}
 
 # Option 2: OAuth Access Token
 Authorization: access_token {your_oauth_token}
-
-# Option 3: JWT Token
-Authorization: jwt {your_jwt_token}
 ```
 
 ---
@@ -112,7 +109,7 @@ Creation returns an array of "benches" (workflow steps) created:
 ```json
 [
   {
-    "bench_id": 101,
+    "bench_id": 100,
     "parent_id": 100,
     "root_id": 100,
     "account_id": 1,
@@ -124,8 +121,8 @@ Creation returns an array of "benches" (workflow steps) created:
     "step_label": "Live"
   },
   {
-    "bench_id": 102,
-    "parent_id": 101,
+    "bench_id": 101,
+    "parent_id": 100,
     "root_id": 100,
     "smalltext": "Spring 2025 Collection - Packshot",
     "benchsteptype": 20,

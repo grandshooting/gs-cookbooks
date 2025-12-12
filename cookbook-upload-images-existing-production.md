@@ -29,21 +29,33 @@ curl -X GET "https://api.grand-shooting.com/v3/production" \
 
 ```json
 [
-  {
-    "bench_id": 100,
-    "root_id": 100,
-    "smalltext": "Spring 2025 Collection",
-    "benchstatus": 10,
-    "startdate": "2025-03-15T09:00:00",
-    "enddate": "2025-03-15T18:00:00"
-  },
-  {
-    "bench_id": 200,
-    "root_id": 200,
-    "smalltext": "Summer 2025 Campaign",
-    "benchstatus": 20,
-    "startdate": "2025-04-01T09:00:00"
-  }
+  [
+    {
+      "bench_id": 100,
+      "root_id": 100,
+      "smalltext": "Spring 2025 Collection",
+      "benchstatus": 10,
+      "startdate": "2025-03-15T09:00:00",
+      "enddate": "2025-03-15T18:00:00"
+    },
+    {
+      "bench_id": 101,
+      "root_id": 100,
+      "parent_id" : 100,
+      "smalltext": "Spring 2025 Collection (Phase 1)",
+      "benchstatus": 20,
+      "startdate": "2025-03-15T09:00:00",
+      "enddate": "2025-03-15T18:00:00"
+    }
+  ], [
+    {
+      "bench_id": 200,
+      "root_id": 200,
+      "smalltext": "Summer 2025 Campaign",
+      "benchstatus": 20,
+      "startdate": "2025-04-01T09:00:00"
+    }
+  ]
 ]
 ```
 

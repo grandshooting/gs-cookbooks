@@ -25,8 +25,6 @@ Authorization: Bearer {your_token}
 # OAuth Access Token
 Authorization: access_token {your_oauth_token}
 
-# JWT Token
-Authorization: jwt {your_jwt_token}
 ```
 
 ### Base URL
