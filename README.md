@@ -1,6 +1,7 @@
 # Grand Shooting API Cookbooks
 
-Welcome to the Grand Shooting API documentation. These cookbooks provide practical, step-by-step guides to help you integrate with the Grand Shooting platform quickly and efficiently.
+Welcome to the Grand Shooting API cookbooks. These cookbooks provide practical, step-by-step guides to help you integrate with the Grand Shooting platform quickly and efficiently.
+For more details, the reference API documentation can be found here : https://api.grand-shooting.com/
 
 ## What are Cookbooks?
 
