@@ -132,7 +132,7 @@ Creation returns an array of "benches" (workflow steps) created:
 ]
 ```
 
-**Important**: Note the `root_id` (here `100`) and the `bench_id` of the "Live" bench (here `101`) - you'll need these to upload images.
+**Important**: Note the `root_id` (here `100`) and the `bench_id` of the "Live" bench (here `100`, where `benchsteptype: 10`) - you'll need these to upload images.
 
 ### Status Reference
 
@@ -176,7 +176,7 @@ POST /v3/production/{bench_root_id}/bench/{bench_id}/upload
 #### Example
 
 ```bash
-curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload" \
+curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/100/upload" \
   -H "Authorization: Bearer {your_token}" \
   -F "file=@/path/to/image.jpg" \
   -F "path=/" \
@@ -215,7 +215,7 @@ POST /v3/production/{bench_root_id}/bench/{bench_id}/upload/url
 #### Example: Simple Upload
 
 ```bash
-curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload/url" \
+curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/100/upload/url" \
   -H "Authorization: Bearer {your_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -237,7 +237,7 @@ curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload/
 #### Example: Upload with Reference Assignment
 
 ```bash
-curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload/url" \
+curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/100/upload/url" \
   -H "Authorization: Bearer {your_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -277,7 +277,7 @@ curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload/
     "status_desc": "Success",
     "picture": {
       "picture_id": 1023,
-      "bench_id": 101,
+      "bench_id": 100,
       "ref": "FW25_ALDA_PINK",
       "file_path": "JPG/FW25_ALDA_PINK-1.jpg",
       "picturestatus": 30
@@ -290,7 +290,7 @@ curl -X POST "https://api.grand-shooting.com/v3/production/100/bench/101/upload/
     "status_desc": "Success",
     "picture": {
       "picture_id": 1024,
-      "bench_id": 101,
+      "bench_id": 100,
       "ref": "FW25_ALDA_PINK",
       "file_path": "JPG/FW25_ALDA_PINK-2.jpg",
       "picturestatus": 30

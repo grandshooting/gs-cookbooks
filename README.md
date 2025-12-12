@@ -97,6 +97,7 @@ Learn how to manage your product catalog (references) through the API.
 | List benches | GET | `/v3/production/{id}/bench` |
 | Upload image (file) | POST | `/v3/production/{id}/bench/{bench_id}/upload` |
 | Upload images (URL) | POST | `/v3/production/{id}/bench/{bench_id}/upload/url` |
+| List images | GET | `/v3/picture?bench_id={bench_id}` |
 | List references | GET | `/v3/reference` |
 | Create/update reference | POST | `/v3/reference` |
 | Bulk create references | POST | `/v3/reference/bulk` |
@@ -129,6 +130,54 @@ Learn how to manage your product catalog (references) through the API.
 | 20 | Post-production Phase 1 | Yes |
 | 30 | Post-production Phase 2 | Yes |
 | 40 | Export/Validation | No |
+
+## Important Notes
+
+### Understanding the Production Response Structure
+
+When you create a production, the API returns an **array of benches** (workflow steps). The key IDs to remember:
+
+- `root_id`: The production identifier (same as the `bench_id` of the first bench)
+- `bench_id`: The identifier for each workflow step
+
+**Example**: If the response shows `bench_id: 100` with `benchsteptype: 10` (Live), you use:
+- `bench_root_id = 100` (in the URL path)
+- `bench_id = 100` (for uploading to the Live bench)
+
+### List Productions Response Format
+
+The `GET /v3/production` endpoint returns a **nested array** (array of arrays), where each inner array represents one production with all its benches:
+
+```json
+[
+  [
+    { "bench_id": 100, "root_id": 100, "benchsteptype": 10, ... },
+    { "bench_id": 101, "root_id": 100, "benchsteptype": 20, ... }
+  ],
+  [
+    { "bench_id": 200, "root_id": 200, "benchsteptype": 10, ... }
+  ]
+]
+```
+
+### Finding the Right shooting_method_id
+
+The `shooting_method_id` is required when creating a production. Common values:
+- `1`: Standard packshot
+- Contact your Grand Shooting administrator for the list of available shooting methods in your account.
+
+---
+
+## Tests
+
+Automated tests are available in the `tests/` directory to validate all cookbook use cases. See [tests/README.md](./tests/README.md) for details.
+
+```bash
+cd tests
+npm run test:all
+```
+
+---
 
 ## Need Help?
 

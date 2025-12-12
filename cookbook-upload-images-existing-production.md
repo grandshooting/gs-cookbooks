@@ -27,6 +27,8 @@ curl -X GET "https://api.grand-shooting.com/v3/production" \
 
 #### Response
 
+**Note**: The response is a **nested array** (array of arrays). Each inner array represents one production with all its benches grouped together.
+
 ```json
 [
   [
@@ -34,6 +36,7 @@ curl -X GET "https://api.grand-shooting.com/v3/production" \
       "bench_id": 100,
       "root_id": 100,
       "smalltext": "Spring 2025 Collection",
+      "benchsteptype": 10,
       "benchstatus": 10,
       "startdate": "2025-03-15T09:00:00",
       "enddate": "2025-03-15T18:00:00"
@@ -41,23 +44,28 @@ curl -X GET "https://api.grand-shooting.com/v3/production" \
     {
       "bench_id": 101,
       "root_id": 100,
-      "parent_id" : 100,
+      "parent_id": 100,
       "smalltext": "Spring 2025 Collection (Phase 1)",
+      "benchsteptype": 20,
       "benchstatus": 20,
       "startdate": "2025-03-15T09:00:00",
       "enddate": "2025-03-15T18:00:00"
     }
-  ], [
+  ],
+  [
     {
       "bench_id": 200,
       "root_id": 200,
       "smalltext": "Summer 2025 Campaign",
+      "benchsteptype": 10,
       "benchstatus": 20,
       "startdate": "2025-04-01T09:00:00"
     }
   ]
 ]
 ```
+
+**Tip**: To find the Live bench (where you can upload), look for `benchsteptype: 10`. The `root_id` is your `bench_root_id` for API calls.
 
 ### List Benches for a Production
 
@@ -352,9 +360,11 @@ Useful for retouched versions or alternatives:
 ### List Production Images
 
 ```bash
-curl -X GET "https://api.grand-shooting.com/v3/production/100/bench/100/picture" \
+curl -X GET "https://api.grand-shooting.com/v3/picture?bench_id=100" \
   -H "Authorization: Bearer {your_token}"
 ```
+
+**Note**: Use the query parameter `bench_id` to filter images by bench.
 
 #### Response
 
