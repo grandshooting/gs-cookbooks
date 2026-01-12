@@ -86,6 +86,22 @@ Learn how to manage your product catalog (references) through the API.
 
 ---
 
+### 4. [Retrieve Pictures with Filters](./cookbook-retrieve-pictures-with-filters.md)
+
+Learn how to query and retrieve pictures using powerful filtering capabilities.
+
+**Topics covered:**
+- Filtering pictures by date ranges, status, and exports
+- Using comparison operators (gt, lt, gte, lte)
+- Combining multiple filters for precise queries
+- Cursor-based pagination for large volumes (10,000+ pictures)
+- Downloading picture files
+- Exporting picture metadata to CSV
+
+**Best for:** Retrieving, filtering, and exporting pictures from your productions.
+
+---
+
 ## Quick Reference
 
 ### Common Endpoints
@@ -98,6 +114,7 @@ Learn how to manage your product catalog (references) through the API.
 | Upload image (file) | POST | `/v3/production/{id}/bench/{bench_id}/upload` |
 | Upload images (URL) | POST | `/v3/production/{id}/bench/{bench_id}/upload/url` |
 | List images | GET | `/v3/picture?bench_id={bench_id}` |
+| Download image | GET | `/v3/picture/{picture_id}/download` |
 | List references | GET | `/v3/reference` |
 | Create/update reference | POST | `/v3/reference` |
 | Bulk create references | POST | `/v3/reference/bulk` |
