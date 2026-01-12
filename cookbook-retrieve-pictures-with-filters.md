@@ -241,11 +241,17 @@ HEADERS = {
 
 def get_pictures_page(filters, last_picture_id=0):
     """Retrieve a page of pictures using cursor-based pagination."""
-    params = {
-        **filters,
-        "picture_id": f"gt:{last_picture_id}",
-        "sort_by": "picture_id"
-    }
+    # Build params list to handle multiple values for same key (e.g., date ranges)
+    params = [("picture_id", f"gt:{last_picture_id}"), ("sort_by", "picture_id")]
+
+    for key, value in filters.items():
+        if isinstance(value, list):
+            # Handle multiple values for same parameter (e.g., date ranges)
+            for v in value:
+                params.append((key, v))
+        else:
+            params.append((key, value))
+
     response = requests.get(
         f"{API_BASE}/picture",
         headers=HEADERS,
@@ -309,6 +315,173 @@ print(f"Total recently modified pictures: {len(recent_pictures)}")
 
 ---
 
+## Use Case 6: Download Picture Files
+
+Once you have retrieved picture metadata, you can download the actual image files using the download endpoint.
+
+### Download Endpoint
+
+```
+GET /v3/picture/{picture_id}/download
+```
+
+### Example: Download a Single Picture
+
+```bash
+curl -X GET "https://api.grand-shooting.com/v3/picture/1023/download" \
+  -H "Authorization: Bearer {your_token}" \
+  -o "downloaded_image.jpg"
+```
+
+### Example: Download Multiple Pictures (Python)
+
+```python
+import requests
+import os
+
+API_BASE = "https://api.grand-shooting.com/v3"
+TOKEN = "your_token"
+HEADERS = {"Authorization": f"Bearer {TOKEN}"}
+
+def download_picture(picture_id, output_path):
+    """Download a single picture file."""
+    response = requests.get(
+        f"{API_BASE}/picture/{picture_id}/download",
+        headers=HEADERS,
+        stream=True
+    )
+
+    if response.status_code == 200:
+        with open(output_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        return True
+    else:
+        print(f"Error downloading picture {picture_id}: {response.status_code}")
+        return False
+
+def download_pictures(pictures, output_dir):
+    """Download multiple pictures to a directory."""
+    os.makedirs(output_dir, exist_ok=True)
+
+    for picture in pictures:
+        picture_id = picture["picture_id"]
+        # Use ref and view_type for filename, or fallback to picture_id
+        ref = picture.get("ref", f"picture_{picture_id}")
+        view_type = picture.get("view_type_code", "")
+        filename = f"{ref}_{view_type}.jpg" if view_type else f"{ref}.jpg"
+
+        output_path = os.path.join(output_dir, filename)
+        print(f"Downloading {picture_id} -> {filename}...")
+
+        if download_picture(picture_id, output_path):
+            print(f"  ✓ Saved to {output_path}")
+        else:
+            print(f"  ✗ Failed")
+
+# --- USAGE ---
+
+# First, retrieve pictures (e.g., all validated pictures from an export)
+response = requests.get(
+    f"{API_BASE}/picture",
+    headers=HEADERS,
+    params={"picturestatus": 50, "export": "E-commerce HD", "sort_by": "picture_id"}
+)
+pictures = response.json()
+
+# Download all pictures to a local directory
+download_pictures(pictures, "./downloaded_pictures")
+```
+
+### Complete Example: Filter and Download Pictures
+
+```python
+import requests
+import os
+from datetime import datetime, timedelta
+
+API_BASE = "https://api.grand-shooting.com/v3"
+TOKEN = "your_token"
+HEADERS = {"Authorization": f"Bearer {TOKEN}"}
+
+def get_all_pictures(filters):
+    """Retrieve all pictures matching filters with cursor-based pagination."""
+    all_pictures = []
+    last_picture_id = 0
+
+    while True:
+        params = [("picture_id", f"gt:{last_picture_id}"), ("sort_by", "picture_id")]
+        for key, value in filters.items():
+            if isinstance(value, list):
+                for v in value:
+                    params.append((key, v))
+            else:
+                params.append((key, value))
+
+        response = requests.get(f"{API_BASE}/picture", headers=HEADERS, params=params)
+        pictures = response.json()
+
+        if not pictures:
+            break
+
+        all_pictures.extend(pictures)
+        last_picture_id = pictures[-1]["picture_id"]
+
+        if len(pictures) < 100:
+            break
+
+    return all_pictures
+
+def download_picture(picture_id, output_path):
+    """Download a single picture file."""
+    response = requests.get(
+        f"{API_BASE}/picture/{picture_id}/download",
+        headers=HEADERS,
+        stream=True
+    )
+
+    if response.status_code == 200:
+        with open(output_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        return True
+    return False
+
+# --- USAGE: Download all validated pictures from the last 7 days ---
+
+seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+
+print(f"Fetching validated pictures since {seven_days_ago}...")
+pictures = get_all_pictures({
+    "picturestatus": 50,
+    "validation_date": f"gte:{seven_days_ago}"
+})
+print(f"Found {len(pictures)} pictures to download")
+
+# Create output directory
+output_dir = "./recent_validated_pictures"
+os.makedirs(output_dir, exist_ok=True)
+
+# Download each picture
+for i, picture in enumerate(pictures, 1):
+    picture_id = picture["picture_id"]
+    ref = picture.get("ref", f"picture_{picture_id}")
+    view_type = picture.get("view_type_code", "")
+    filename = f"{ref}_{view_type}.jpg" if view_type else f"{ref}.jpg"
+
+    output_path = os.path.join(output_dir, filename)
+    print(f"[{i}/{len(pictures)}] Downloading {filename}...")
+
+    if download_picture(picture_id, output_path):
+        print(f"  ✓ Done")
+    else:
+        print(f"  ✗ Failed")
+
+print(f"\nDownload complete. Files saved to {output_dir}")
+```
+
+---
+
 ## Complete Python Example: Export Pictures with Filters
 
 ```python
@@ -328,11 +501,15 @@ def export_pictures_to_csv(filters, output_file):
     print(f"Fetching pictures with filters: {filters}")
 
     while True:
-        params = {
-            **filters,
-            "picture_id": f"gt:{last_picture_id}",
-            "sort_by": "picture_id"
-        }
+        # Build params list to handle multiple values for same key (e.g., date ranges)
+        params = [("picture_id", f"gt:{last_picture_id}"), ("sort_by", "picture_id")]
+        for key, value in filters.items():
+            if isinstance(value, list):
+                for v in value:
+                    params.append((key, v))
+            else:
+                params.append((key, value))
+
         response = requests.get(f"{API_BASE}/picture", headers=HEADERS, params=params)
         pictures = response.json()
 
